@@ -1,0 +1,5 @@
+RC4, AES는 아래 링크에서 참조함
+https://code.google.com/p/ulib/source/browse/trunk/src/base/?r=197
+
+MD5, SHA1은 아래 링크에서 참조함
+github의 crypto-algorithms 프로젝트 

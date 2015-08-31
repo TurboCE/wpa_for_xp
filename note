@@ -1,0 +1,21 @@
+openssl로 2.2초
+without openssl 5.8초
+
+mic core only 73초
+
+
+* 로직 정리
+
+1. 인자 정리
+2. passphase key 수신
+3. calc_pmk 함수로 passphase key로부터 pmk 생성.
+   calc_pmk(key,essid,pmk);
+4. pmk, pke로부터 ptk 계산
+   HMAC(EVP_sha1(), pmk, 32, pke, 100, ptk + i * 20, NULL);
+5. wpa.keyver을 참고하여, 1이면 WPA이므로
+   HMAC(EVP_md5(), ptk[j], 16, ap->wpa.eapol, ap->wpa.eapol_size, mic[j], NULL);
+   else WPA2이므로
+   HMAC(EVP_sha1(), ptk[j], 16, ap->wpa.eapol, ap->wpa.eapol_size, mic[j], NULL);
+6. 계산된 mic의 값이 ap->wpa.keymic와 16자리가 같다면 SUCCESS
+
+

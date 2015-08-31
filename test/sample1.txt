@@ -1,0 +1,12 @@
+                           KEY FOUND! [ dekdekdek ]
+
+
+      Master Key     : BB 67 40 A5 FC 59 C3 31 8C D9 AF 6D 5F 34 03 AB
+                       FF 28 44 B3 03 4E C9 4A 6F A7 E3 F7 7A E7 14 C1
+
+      Transient Key  : 0D 81 E7 E7 BD 26 28 FB 97 FB EC F4 6E 83 84 F1
+                       A9 84 F8 E9 7A 50 8F 01 AE EC 82 1D C6 F1 52 9A
+                       52 24 47 45 43 01 95 41 1F 38 D8 92 55 38 A6 12
+                       B4 F7 9D 25 A4 29 5A C3 8D E1 C3 3D D7 3D F6 62
+
+      EAPOL HMAC     : 3E D3 A9 58 26 8D EB 70 5B E0 3B FD C7 04 A3 D2
