@@ -455,6 +455,8 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
     }
 }
 
+#ifdef __MIC__
+
 void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
 {
   int k,i, j, slen;
@@ -545,6 +547,15 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
       pmk[k][j] = pmk_buf[j][k];
   
 }
+
+#else
+void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
+{
+  int i;
+  for(i=0;i<16;i++)
+      calc_pmk(key[i],essid_pre,pmk[i]);
+}
+#endif
 
 // void calc_ptk (struct WPA_hdsk *wpa, unsigned char bssid[6], unsigned char pmk[32], unsigned char ptk[80]) {
 // 	int i;

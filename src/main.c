@@ -163,41 +163,55 @@ void crack_wpa(char *fn)
   #pragma omp master
   printf("Initializing ... %d threads\n",omp_get_num_threads());
 
-  prof_pmk(hc.essid);
-  return;
+
+  //  prof_pmk(hc.essid);
+  //return;
   //#pragma omp parallel for private(i) shared(key,hc,pmk,pke,mic)
-  //for(itr=0;itr<1000;itr++)
-    {
-      TIME_STRUCT p1 = t_start(),p2;
-      calc_pmk(key,hc.essid,pmk); //key값과 essid로부터 pmk 값을 계산함
-      t_end(&p1);
 
-      p2 = t_start();
-      for(i=0;i<4;i++)
-	{
-	  pke[99] = i;
-	  HMAC(EVP_sha1(), pmk, 32, pke, 100, ptk + i * 20, NULL);
-	}
-      
-      if(hc.keyver == 1)
-	HMAC(EVP_md5(), ptk, 16,hc.eapol,hc.eapol_size,mic,NULL);
-      else
-	HMAC(EVP_sha1(), ptk, 16, hc.eapol,hc.eapol_size,mic,NULL);
-      
-      //      show_wpa_stats(key,keylen,pmk,ptk,mic);
-      
-      if(memcmp(mic,hc.keymic,16) == 0)
-	{
-	  //	  printf("success\n");
-	  //	  return ;
-	}
-      t_end(&p2);
+  {
+    char key[16][128];
+    unsigned char pmk_sol[16][40];
+    unsigned char pmk_fast[16][40];
 
-      printf("p1 : ");
-      t_dump(p1);
-      printf("p2 : ");
-      t_dump(p2);
-    }
+    TIME_STRUCT p1;
+
+    int i,j;
+    for(i=0;i<16;i++)
+      {
+	strcpy(key[i],"atest");
+	key[i][0]+=i;
+      }
+    p1 = t_start();
+#pragma omp parallel for
+    for(itr=0;itr<16000;itr+=16)
+      {
+	calc_16pmk(key,hc.essid,pmk_fast); //key값과 essid로부터 pmk 값을 계산함
+	//t_end(&p1);
+
+	//      p2 = t_start();
+	for(i=0;i<4;i++)
+	  {
+	    pke[99] = i;
+	    HMAC(EVP_sha1(), pmk, 32, pke, 100, ptk + i * 20, NULL);
+	  }
+      
+	if(hc.keyver == 1)
+	  HMAC(EVP_md5(), ptk, 16,hc.eapol,hc.eapol_size,mic,NULL);
+	else
+	  HMAC(EVP_sha1(), ptk, 16, hc.eapol,hc.eapol_size,mic,NULL);
+      
+	//      show_wpa_stats(key,keylen,pmk,ptk,mic);
+      
+	if(memcmp(mic,hc.keymic,16) == 0)
+	  {
+	    //	  printf("success\n");
+	    //	  return ;
+	  }
+	//      t_end(&p2);
+      }
+    t_end(&p1);
+    printf("time : %0.2lf ms\n",t_get(p1)/1000);
+  }
   //  printf("failed\n");
   return;
 }
