@@ -11,7 +11,7 @@ CFLAGS	= -Wall -I./src -L/opt/intel/composerxe/lib/intel64/
 CFLAGS += -fopenmp -O3 -openmp-link static
 #CFLAGS += -mmic
 CFLAGS += -DUSE_LIGHT_CRYPTO
-CFLAGS += -vec-report2 -g
+#CFLAGS += -vec-report2 -g
 
 LINKER	= /opt/intel/bin/icc -o
 #LINKER = gcc -o
@@ -20,7 +20,7 @@ LINKER	= /opt/intel/bin/icc -o
 LFLAGS	= -Wall
 LFLAGS += -fopenmp -O3 -openmp-link static
 #LFLAGS += -mmic
-LFLAGS += -g
+#LFLAGS += -g
 
 #LIBSSL	= -lssl -lcrypto
 LIBS = $(LIBSSL)
