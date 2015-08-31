@@ -324,7 +324,7 @@ void sha1_16transform(SHA1_MOD_CTX *ctx)
 }
 
 //buffer [65][16]
-void sha1_16precalc(SHA1_MOD_CTX *ctx,unsigned char (*buffer)[65])
+void sha1_16precalc(SHA1_MOD_CTX *ctx,unsigned char (*buffer)[64])
 {
   int k,i;
 #pragma simd
@@ -352,7 +352,7 @@ void sha1_16precalc(SHA1_MOD_CTX *ctx,unsigned char (*buffer)[65])
   sha1_16transform(ctx);
 }
 //buffer [65][16]
-void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,unsigned char (*buffer)[65]) 
+void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,unsigned char (*buffer)[64]) 
 {
   int k,i;
 
@@ -382,14 +382,14 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
 	ctx[k].data[i++] = 0x00;
 
       // Append to the padding the total message's length in bits and transform.
-      ctx[k].data[63] = 672;
+      ctx[k].data[63] = 160;
       ctx[k].data[62] = 672 >> 8;
-      ctx[k].data[61] = 672 >> 16;
-      ctx[k].data[60] = 672 >> 24;
-      ctx[k].data[59] = 672 >> 32;
-      ctx[k].data[58] = 672 >> 40;
-      ctx[k].data[57] = 672 >> 48;
-      ctx[k].data[56] = 672 >> 56;
+      ctx[k].data[61] = 0;
+      ctx[k].data[60] = 0;
+      ctx[k].data[59] = 0;
+      ctx[k].data[58] = 0;
+      ctx[k].data[57] = 0;
+      ctx[k].data[56] = 0;
     }
 
   sha1_16transform(ctx);
@@ -435,14 +435,14 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
 	ctx[k].data[i++] = 0x00;
 
       // Append to the padding the total message's length in bits and transform.
-      ctx[k].data[63] = 672;
+      ctx[k].data[63] = 160;
       ctx[k].data[62] = 672 >> 8;
-      ctx[k].data[61] = 672 >> 16;
-      ctx[k].data[60] = 672 >> 24;
-      ctx[k].data[59] = 672 >> 32;
-      ctx[k].data[58] = 672 >> 40;
-      ctx[k].data[57] = 672 >> 48;
-      ctx[k].data[56] = 672 >> 56;
+      ctx[k].data[61] = 0;
+      ctx[k].data[60] = 0;
+      ctx[k].data[59] = 0;
+      ctx[k].data[58] = 0;
+      ctx[k].data[57] = 0;
+      ctx[k].data[56] = 0;
     }
 
   sha1_16transform(ctx);
@@ -464,7 +464,8 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
 void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
 {
   int k,i, j, slen;
-  unsigned char buffer[16][65];
+
+  unsigned char buffer[16][64];
   char essid[33+4];
   SHA1_MOD_CTX ctx_ipad[16];
   SHA1_MOD_CTX ctx_opad[16];
@@ -476,7 +477,12 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
 
   /* setup the inner and outer contexts */
   for(k=0;k<16;k++)
-    strncpy( (char *) buffer[k], key[k], sizeof( buffer[k] ) - 1 );
+    {
+      for(i=0;i<64 && key[k][i] != '\0';i++)
+	buffer[k][i] = key[k][i];
+      for(;i<64;i++)
+	buffer[k][i] = '\0';
+    }
 
   for(k=0;k<16;k++)
     for( i = 0; i < 64; i++ )
