@@ -9,7 +9,7 @@ CC	= /opt/intel/bin/icc
 # compiling flags here
 CFLAGS	= -Wall -I./src -L/opt/intel/composerxe/lib/intel64/ 
 CFLAGS += -fopenmp -O3 -openmp-link static
-#CFLAGS += -mmic
+CFLAGS += -mmic
 CFLAGS += -DUSE_LIGHT_CRYPTO
 #CFLAGS += -vec-report2 -g
 
@@ -19,7 +19,7 @@ LINKER	= /opt/intel/bin/icc -o
 # linking flags here
 LFLAGS	= -Wall
 LFLAGS += -fopenmp -O3 -openmp-link static
-#LFLAGS += -mmic
+LFLAGS += -mmic
 #LFLAGS += -g
 
 #LIBSSL	= -lssl -lcrypto
@@ -55,10 +55,10 @@ remove: clean
 
 .PHONEY: test
 test: FORCE 
-#	@sshpass -f passwd scp $(BINDIR)/$(TARGET) dekaf@mic0:/home/dekaf/
-#	@sshpass -f passwd scp test/target.mimo.hccap dekaf@mic0:/home/dekaf/
-#	@sshpass -f passwd ssh dekaf@mic0 time /home/dekaf/$(TARGET) target.mimo.hccap
-	$(BINDIR)/$(TARGET) ./test/target.mimo.hccap
+	@sshpass -f passwd scp $(BINDIR)/$(TARGET) dekaf@mic0:/home/dekaf/
+	@sshpass -f passwd scp test/target.mimo.hccap dekaf@mic0:/home/dekaf/
+	@sshpass -f passwd ssh dekaf@mic0 time /home/dekaf/$(TARGET) target.mimo.hccap
+#	$(BINDIR)/$(TARGET) ./test/target.mimo.hccap
 #	@cat test/sample1.txt
 FORCE:
 
