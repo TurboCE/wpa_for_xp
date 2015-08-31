@@ -543,7 +543,7 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
 
   //change order
   for(k=0;k<16;k++)
-    for(j=0;j<40;j++)
+   for(j=0;j<40;j++)
       pmk[k][j] = pmk_buf[j][k];
   
 }
