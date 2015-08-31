@@ -251,92 +251,92 @@ typedef struct {
 
 
 #define ROTLEFT(a, b) ((a << b) | (a >> (32 - b)))
-#include <immintrin.h>
 
 void sha1_16transform(SHA1_MOD_CTX *ctx)
 {
   int k;
-  WORD a[16], b[16], c[16], d[16], e[16], i, j, t[16], m[16][80];
-  __m512 ia,ib,ic,id,ie,it;
-  
-  for(k=0;k<16;k++)
-    {
-      
-      for (i = 0, j = 0; i < 16; ++i, j += 4)
-	m[k][i] = (ctx->data[j][k] << 24) + (ctx->data[j + 1][k] << 16) + (ctx->data[j + 2][k] << 8) + (ctx->data[j + 3][k]);
-      for ( ; i < 80; ++i) {
-	m[k][i] = (m[k][i - 3] ^ m[k][i - 8] ^ m[k][i - 14] ^ m[k][i - 16]);
-	m[k][i] = (m[k][i] << 1) | (m[k][i] >> 31);
+  WORD a[16], b[16], c[16], d[16], e[16], i, j, t[16], m[80][16];
+
+  for (i = 0, j = 0; i < 16; ++i, j += 4)
+    for(k=0;k<16;k++)
+      m[i][k] = (ctx->data[j][k] << 24) + (ctx->data[j + 1][k] << 16) + (ctx->data[j + 2][k] << 8) + (ctx->data[j + 3][k]);
+  for ( ; i < 80; ++i) {
+    for(k=0;k<16;k++)
+      {
+	m[i][k] = (m[i - 3][k] ^ m[i - 8][k] ^ m[i - 14][k] ^ m[i - 16][k]);
+	m[i][k] = (m[i][k] << 1) | (m[i][k] >> 31);
       }
-    }
-  /*
-  ia = _mm512_load_epi32(ctx->state[0]);
-  ib = _mm512_load_epi32(ctx->state[1]);
-  ic = _mm512_load_epi32(ctx->state[2]);
-  id = _mm512_load_epi32(ctx->state[3]);
-  ie = _mm512_load_epi32(ctx->state[4]);
-
-  for(i=0;i<20;++i)
-    {
-      
-    }
-*/
-
-
+  }
     for(k=0;k<16;k++)
     {
-    a[k] = ctx->state[0][k];
-    b[k] = ctx->state[1][k];
-    c[k] = ctx->state[2][k];
-    d[k] = ctx->state[3][k];
-    e[k] = ctx->state[4][k];
+      a[k] = ctx->state[0][k];
+      b[k] = ctx->state[1][k];
+      c[k] = ctx->state[2][k];
+      d[k] = ctx->state[3][k];
+      e[k] = ctx->state[4][k];
     }
-  
-  for(k=0;k<16;k++)
-    {
-      for (i = 0; i < 20; ++i) {
-	t[k] = ROTLEFT(a[k], 5) + ((b[k] & c[k]) ^ (~b[k] & d[k])) + e[k] + ctx->k[0][k] + m[k][i];
-	e[k] = d[k];
-	d[k] = c[k];
-	c[k] = ROTLEFT(b[k], 30);
-	b[k] = a[k];
-	a[k] = t[k];
+
+     for (i = 0; i < 20; ++i) {
+       #pragma simd
+	for(k=0;k<16;k++)
+	  {
+	    t[k] = ROTLEFT(a[k], 5) + ((b[k] & c[k]) ^ (~b[k] & d[k])) + e[k] + ctx->k[0][k] + m[i][k];
+	    e[k] = d[k];
+	    d[k] = c[k];
+	    c[k] = ROTLEFT(b[k], 30);
+	    b[k] = a[k];
+	    a[k] = t[k];
+	  }
       }
+
       for ( ; i < 40; ++i) {
-	t[k] = ROTLEFT(a[k], 5) + (b[k] ^ c[k] ^ d[k]) + e[k] + ctx->k[1][k] + m[k][i];
-	e[k] = d[k];
-	d[k] = c[k];
-	c[k] = ROTLEFT(b[k], 30);
-	b[k] = a[k];
-	a[k] = t[k];
+	#pragma simd
+	for(k=0;k<16;k++)
+	  {
+	    t[k] = ROTLEFT(a[k], 5) + (b[k] ^ c[k] ^ d[k]) + e[k] + ctx->k[1][k] + m[i][k];
+	    e[k] = d[k];
+	    d[k] = c[k];
+	    c[k] = ROTLEFT(b[k], 30);
+	    b[k] = a[k];
+	    a[k] = t[k];
+	  }
       }
+
+    {
       for ( ; i < 60; ++i) {
-	t[k] = ROTLEFT(a[k], 5) + ((b[k] & c[k]) ^ (b[k] & d[k]) ^ (c[k] & d[k]))  + e[k] + ctx->k[2][k] + m[k][i];
-	e[k] = d[k];
-	d[k] = c[k];
-	c[k] = ROTLEFT(b[k], 30);
-	b[k] = a[k];
-	a[k] = t[k];
+	#pragma simd
+	for(k=0;k<16;k++)
+	  {
+	    t[k] = ROTLEFT(a[k], 5) + ((b[k] & c[k]) ^ (b[k] & d[k]) ^ (c[k] & d[k]))  + e[k] + ctx->k[2][k] + m[i][k];
+	    e[k] = d[k];
+	    d[k] = c[k];
+	    c[k] = ROTLEFT(b[k], 30);
+	    b[k] = a[k];
+	    a[k] = t[k];
+	  }
       }
       for ( ; i < 80; ++i) {
-	t[k] = ROTLEFT(a[k], 5) + (b[k] ^ c[k] ^ d[k]) + e[k] + ctx->k[3][k] + m[k][i];
-	e[k] = d[k];
-	d[k] = c[k];
-	c[k] = ROTLEFT(b[k], 30);
-	b[k] = a[k];
-	a[k] = t[k];
+	#pragma simd
+	for(k=0;k<16;k++)
+	  {
+	    t[k] = ROTLEFT(a[k], 5) + (b[k] ^ c[k] ^ d[k]) + e[k] + ctx->k[3][k] + m[i][k];
+	    e[k] = d[k];
+	    d[k] = c[k];
+	    c[k] = ROTLEFT(b[k], 30);
+	    b[k] = a[k];
+	    a[k] = t[k];
+	  }
       }
     }
-
-
-  for(k=0;k<16;k++)
-    {
-      ctx->state[0][k] += a[k];
-      ctx->state[1][k] += b[k];
-      ctx->state[2][k] += c[k];
-      ctx->state[3][k] += d[k];
-      ctx->state[4][k] += e[k];
-    }
+    
+    for(k=0;k<16;k++)
+      {
+	ctx->state[0][k] += a[k];
+	ctx->state[1][k] += b[k];
+	ctx->state[2][k] += c[k];
+	ctx->state[3][k] += d[k];
+	ctx->state[4][k] += e[k];
+      }
 }
 
 //buffer [64][16]
