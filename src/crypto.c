@@ -323,8 +323,8 @@ void sha1_16transform(SHA1_MOD_CTX *ctx)
     }
 }
 
-//buffer [65][16]
-void sha1_16precalc(SHA1_MOD_CTX *ctx,unsigned char (*buffer)[64])
+//buffer [64][16]
+void sha1_16precalc(SHA1_MOD_CTX *ctx,unsigned char buffer[64][16])
 {
   int k,i;
 #pragma simd
@@ -346,13 +346,13 @@ void sha1_16precalc(SHA1_MOD_CTX *ctx,unsigned char (*buffer)[64])
   for(k=0;k<16;k++)
     for(i=0;i<64;i++)
       {
-	ctx[k].data[i] = buffer[k][i];
+	ctx[k].data[i] = buffer[i][k];
       }
 #endif
   sha1_16transform(ctx);
 }
-//buffer [65][16]
-void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,unsigned char (*buffer)[64]) 
+//buffer [64][16]
+void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,unsigned char buffer[64][16]) 
 {
   int k,i;
 
@@ -367,7 +367,7 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
   for(k=0;k<16;k++)
     for(i=0;i<20;i++)
       {
-	ctx[k].data[i] = buffer[k][i];
+	ctx[k].data[i] = buffer[i][k];
       }
 
   for(k=0;k<16;k++)
@@ -399,11 +399,11 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
       // Since this implementation uses little endian byte ordering and MD uses big endian,
       // reverse all the bytes when copying the final state to the output hash.
       for (i = 0; i < 4; ++i) {
-	buffer[k][i]      = (ctx[k].state[0] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 4]  = (ctx[k].state[1] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 8]  = (ctx[k].state[2] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 12] = (ctx[k].state[3] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 16] = (ctx[k].state[4] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i][k]      = (ctx[k].state[0] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 4][k]  = (ctx[k].state[1] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 8][k]  = (ctx[k].state[2] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 12][k] = (ctx[k].state[3] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 16][k] = (ctx[k].state[4] >> (24 - i * 8)) & 0x000000ff;
       }
     }
 #if 0
@@ -420,7 +420,7 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
   for(k=0;k<16;k++)
     for(i=0;i<20;i++)
       {
-	ctx[k].data[i] = buffer[k][i];
+	ctx[k].data[i] = buffer[i][k];
       }
   
   for(k=0;k<16;k++)
@@ -452,11 +452,11 @@ void sha1_16finalcalc(SHA1_MOD_CTX *ibase,SHA1_MOD_CTX *obase,SHA1_MOD_CTX *ctx,
       // Since this implementation uses little endian byte ordering and MD uses big endian,
       // reverse all the bytes when copying the final state to the output hash.
       for (i = 0; i < 4; ++i) {
-	buffer[k][i]      = (ctx[k].state[0] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 4]  = (ctx[k].state[1] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 8]  = (ctx[k].state[2] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 12] = (ctx[k].state[3] >> (24 - i * 8)) & 0x000000ff;
-	buffer[k][i + 16] = (ctx[k].state[4] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i][k]      = (ctx[k].state[0] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 4][k]  = (ctx[k].state[1] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 8][k]  = (ctx[k].state[2] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 12][k] = (ctx[k].state[3] >> (24 - i * 8)) & 0x000000ff;
+	buffer[i + 16][k] = (ctx[k].state[4] >> (24 - i * 8)) & 0x000000ff;
       }
     }
 }
@@ -465,7 +465,8 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
 {
   int k,i, j, slen;
 
-  unsigned char buffer[16][64];
+  unsigned char pmk_buf[40][16];
+  unsigned char buffer[64][16];
   char essid[33+4];
   SHA1_MOD_CTX ctx_ipad[16];
   SHA1_MOD_CTX ctx_opad[16];
@@ -479,20 +480,20 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
   for(k=0;k<16;k++)
     {
       for(i=0;i<64 && key[k][i] != '\0';i++)
-	buffer[k][i] = key[k][i];
+	buffer[i][k] = key[k][i];
       for(;i<64;i++)
-	buffer[k][i] = '\0';
+	buffer[i][k] = '\0';
     }
 
   for(k=0;k<16;k++)
     for( i = 0; i < 64; i++ )
-      buffer[k][i] ^= 0x36;
+      buffer[i][k] ^= 0x36;
 
   sha1_16precalc(ctx_ipad,buffer);
 
   for(k=0;k<16;k++)
     for( i = 0; i < 64; i++ )
-      buffer[k][i] ^= 0x6A;
+      buffer[i][k] ^= 0x6A;
   
   sha1_16precalc(ctx_opad,buffer);
 
@@ -503,23 +504,45 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
   for(k=0;k<16;k++)
     HMAC(EVP_sha1(), (unsigned char *)key[k], strlen(key[k]), (unsigned char*)essid, slen, pmk[k], NULL);
 
+#if 1
   for(k=0;k<16;k++)
-    memcpy( buffer[k], pmk[k], 20 );
+    for(j=0;j<20;j++)
+      pmk_buf[j][k] = buffer[j][k] = pmk[k][j];
+#else
+  //    memcpy( buffer[k], pmk[k], 20 );
+#endif
+
   for( i = 1; i < 4096; i++ )
     {
       sha1_16finalcalc(ctx_ipad,ctx_opad,sha1_ctx,buffer);
 
       for(k=0;k<16;k++)
 	for( j = 0; j < 20; j++ )
-	  pmk[k][j] ^= buffer[k][j];
+	  pmk_buf[j][k] ^= buffer[j][k];
     }
 
   essid[slen - 1] = '\2';
+
+  //change order
+  for(k=0;k<16;k++)
+    for(j=0;j<40;j++)
+      pmk[k][j] = pmk_buf[j][k];
+  
   for(k=0;k<16;k++)
     {
       HMAC(EVP_sha1(), (unsigned char *)key[k], strlen(key[k]), (unsigned char*)essid, slen, (pmk[k])+20, NULL);
-      memcpy( buffer[k], pmk[k] + 20, 20 );
+#if 1
+      for(j=0;j<20;j++)
+	buffer[j][k] = pmk[k][20+j];
+#else
+      //      memcpy( buffer[k], pmk[k] + 20, 20 );
+#endif
     }
+
+  //change order
+  for(k=0;k<16;k++)
+    for(j=0;j<40;j++)
+      pmk_buf[j][k] = pmk[k][j];
 
   for( i = 1; i < 4096; i++ )
     {
@@ -527,8 +550,13 @@ void calc_16pmk(char (*key)[128], char *essid_pre, unsigned char (*pmk)[40])
 
       for(k=0;k<16;k++)
 	for( j = 0; j < 20; j++ )
-	  pmk[k][j + 20] ^= buffer[k][j];
+	  pmk_buf[j + 20][k] ^= buffer[j][k];
     }
+
+  //change order
+  for(k=0;k<16;k++)
+    for(j=0;j<40;j++)
+      pmk[k][j] = pmk_buf[j][k];
   
 }
 
