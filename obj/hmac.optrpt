@@ -1,0 +1,20 @@
+
+Begin optimization report for: hmac_sha1(const unsigned char *, size_t, unsigned char *, size_t, unsigned char *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/hmac.c(73,3)
+   remark #15300: LOOP WAS VECTORIZED
+LOOP END
+===========================================================================
+
+Begin optimization report for: hmac_md5(const unsigned char *, int, const unsigned char *, int, unsigned char *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/hmac.c(170,3)
+   remark #15300: LOOP WAS VECTORIZED
+LOOP END
+===========================================================================

@@ -1,0 +1,120 @@
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/main.c(89,3) inlined into src/main.c(214,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed OUTPUT dependence between key line 91 and key line 92
+LOOP END
+
+LOOP BEGIN at src/main.c(96,3) inlined into src/main.c(214,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(105,3) inlined into src/main.c(214,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed ANTI dependence between pmk_fast line 107 and key line 109
+
+   LOOP BEGIN at src/main.c(75,3) inlined into src/main.c(214,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   LOOP END
+
+   LOOP BEGIN at src/main.c(75,3) inlined into src/main.c(214,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: show_wpa_stats(char *, int, unsigned char *, unsigned char *, unsigned char *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/main.c(53,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(53,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(59,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(59,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(66,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+===========================================================================
+
+Begin optimization report for: prof_pmk(char *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/main.c(89,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed OUTPUT dependence between key line 91 and key line 92
+LOOP END
+
+LOOP BEGIN at src/main.c(96,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(105,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed ANTI dependence between pmk_fast line 107 and key line 109
+
+   LOOP BEGIN at src/main.c(75,3) inlined into src/main.c(110,4)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   LOOP END
+
+   LOOP BEGIN at src/main.c(75,3) inlined into src/main.c(111,4)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: crack_wpa(char *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/main.c(89,3) inlined into src/main.c(166,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed OUTPUT dependence between key line 91 and key line 92
+LOOP END
+
+LOOP BEGIN at src/main.c(96,3) inlined into src/main.c(166,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+
+LOOP BEGIN at src/main.c(105,3) inlined into src/main.c(166,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed ANTI dependence between pmk_fast line 107 and key line 109
+
+   LOOP BEGIN at src/main.c(75,3) inlined into src/main.c(166,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   LOOP END
+
+   LOOP BEGIN at src/main.c(75,3) inlined into src/main.c(166,3)
+      remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: dump_key(char *, unsigned char *, int)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at src/main.c(75,3)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+LOOP END
+===========================================================================
