@@ -1,29 +1,39 @@
 
 
+TARGET = intel
 #project name
-TARGET	= xp_wpa_cracker
+OUTPUT	= xp_wpa_cracker
 
+ifeq ($(TARGET),intel)
+CC = gcc
+LINKER = gcc -o
+else
 CC	= /opt/intel/bin/icc 
-#CC = gcc
+LINKER	= /opt/intel/bin/icc -o
+endif
 
 # compiling flags here
 CFLAGS	= -Wall -I./src -L/opt/intel/composerxe/lib/intel64/ 
-CFLAGS += -fopenmp -O3 -openmp-link static
-CFLAGS += -mmic
+CFLAGS += -fopenmp -O3
 CFLAGS += -DUSE_LIGHT_CRYPTO
 #CFLAGS += -vec-report2 -g
 
-LINKER	= /opt/intel/bin/icc -o
-#LINKER = gcc -o
-
 # linking flags here
 LFLAGS	= -Wall
-LFLAGS += -fopenmp -O3 -openmp-link static
-LFLAGS += -mmic
+LFLAGS += -fopenmp -O3
 #LFLAGS += -g
 
 #LIBSSL	= -lssl -lcrypto
 LIBS = $(LIBSSL)
+
+ifeq ($(TARGET),intel)
+
+else
+CFLAGS += -openmp-link static
+CFLAGS += -mmic
+LFLAGS += -openmp-link static
+LFLAGS += -mmic
+endif
 
 # change these to set the proper directories where each files shoould be
 SRCDIR   = src
@@ -35,7 +45,7 @@ INCLUDES := $(wildcard $(SRCDIR)/*.h)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 rm       = rm -f
 
-$(BINDIR)/$(TARGET): $(OBJECTS)
+$(BINDIR)/$(OUTPUT): $(OBJECTS)
 	@$(LINKER) $@ $(LFLAGS) $(OBJECTS) $(LIBS)
 	@echo "Linking complete!"
 
@@ -50,15 +60,18 @@ clean:
 
 .PHONEY: remove
 remove: clean
-	@$(rm) $(BINDIR)/$(TARGET)
+	@$(rm) $(BINDIR)/$(OUTPUT)
 	@echo "Executable removed!"
 
 .PHONEY: test
 test: FORCE 
-	@sshpass -f passwd scp $(BINDIR)/$(TARGET) dekaf@mic0:/home/dekaf/
+ifeq ($(TARGET),intel)
+	@$(BINDIR)/$(OUTPUT) ./test/target.mimo.hccap
+else
+	@sshpass -f passwd scp $(BINDIR)/$(OUTPUT) dekaf@mic0:/home/dekaf/
 	@sshpass -f passwd scp test/target.mimo.hccap dekaf@mic0:/home/dekaf/
-	@sshpass -f passwd ssh dekaf@mic0 time /home/dekaf/$(TARGET) target.mimo.hccap
-#	$(BINDIR)/$(TARGET) ./test/target.mimo.hccap
+	@sshpass -f passwd ssh dekaf@mic0 time /home/dekaf/$(OUTPUT) target.mimo.hccap
+endif
 #	@cat test/sample1.txt
 FORCE:
 
