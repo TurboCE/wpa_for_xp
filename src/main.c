@@ -161,11 +161,11 @@ void crack_wpa(char *fn)
 
   #pragma omp parallel
   #pragma omp master
-  printf("Initializing ... %d threads\n",omp_get_num_threads());
+  printf("Initializing ... %d/%d threads\n",omp_get_num_threads(),omp_get_max_threads());
 
 
-  //  prof_pmk(hc.essid);
-  //return;
+   prof_pmk(hc.essid);
+  return;
   //#pragma omp parallel for private(i) shared(key,hc,pmk,pke,mic)
 
   {
